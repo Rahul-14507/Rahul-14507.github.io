@@ -20,7 +20,6 @@
       padding: 20px;
     }
 
-    /* 🔥 Special Offer Banner */
     .banner {
       background: linear-gradient(90deg, #f59e0b, #f97316);
       color: white;
@@ -32,7 +31,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
-    /* 📢 Mobile-only note */
     .mobile-note {
       text-align: center;
       background: #e0f2fe;
@@ -42,7 +40,6 @@
       font-weight: 500;
       border-bottom: 2px solid #3b82f6;
     }
-    /* Hide this note on desktop */
     @media (min-width: 768px) {
       .mobile-note { display: none; }
     }
@@ -83,17 +80,54 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
+      perspective: 1000px;
     }
     .services li {
-      background: #f9fafb;
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-weight: 500;
+      position: relative;
+      background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-weight: 600;
       list-style: none;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: background 0.2s ease;
+      text-align: center;
+      font-size: 1.1rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      transform-style: preserve-3d;
+      transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      overflow: hidden;
     }
-    .services li:hover { background: #eef2ff; }
+    .services li span {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      transition: transform 0.3s ease;
+      z-index: 2;
+      position: relative;
+    }
+
+    /* Shine effect */
+    .services li::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.25) 0%, transparent 60%);
+      transform: translate(0,0) rotate(45deg);
+      transition: transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .services li:hover span {
+      animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
 
     iframe {
       width: 100%;
@@ -137,12 +171,10 @@
   </style>
 </head>
 <body>
-  <!-- 🎉 Launch Offer Banner -->
   <div class="banner">
     🎉 Student Launch Offer: Free cleanup with the first 10 bookings!
   </div>
 
-  <!-- 📢 Mobile-only message -->
   <div class="mobile-note">
     📢 For a better experience, visit this site on a PC or Laptop 💻
   </div>
@@ -163,10 +195,10 @@
     <section>
       <h2>🔧 Services Offered</h2>
       <ul class="services">
-        <li>Upgrades</li>
-        <li>Software</li>
-        <li>Repairs</li>
-        <li>Maintenance</li>
+        <li><span>🔧</span>Upgrades</li>
+        <li><span>💻</span>Software</li>
+        <li><span>🛠</span>Repairs</li>
+        <li><span>⚡</span>Maintenance</li>
       </ul>
     </section>
 
@@ -185,5 +217,36 @@
       © 2025 FixMyLaptop | Made with ❤️ by Rahul Pujari, IARE CSE-D
     </footer>
   </div>
+
+  <script>
+    const cards = document.querySelectorAll('.services li');
+
+    cards.forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * 8;
+        const rotateY = ((x - centerX) / centerX) * 8;
+        card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) translateY(-4px) scale(1.03)`;
+
+        // Move shine
+        const shineX = ((x / rect.width) * 200) - 100;
+        const shineY = ((y / rect.height) * 200) - 100;
+        card.style.setProperty('--shineX', `${shineX}%`);
+        card.style.setProperty('--shineY', `${shineY}%`);
+        card.querySelector('::before'); // trigger reflow
+        card.style.setProperty('transform', card.style.transform);
+        card.style.backgroundImage = `linear-gradient(135deg, #c7d2fe, #bfdbfe), radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.25) 0%, transparent 60%)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateX(0) rotateY(0) translateY(0) scale(1)';
+        card.style.background = 'linear-gradient(135deg, #e0f2fe, #dbeafe)';
+      });
+    });
+  </script>
 </body>
 </html>
