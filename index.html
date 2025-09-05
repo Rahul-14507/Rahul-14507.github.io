@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -162,6 +162,20 @@
       color: #6b7280;
     }
 
+    /* 🔹 Mobile tweaks for services */
+    @media (max-width: 480px) {
+      .services li {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+      }
+      .services li span {
+        display: inline-block;
+        margin: 0 6px 0 0;
+        vertical-align: middle;
+        font-size: 1.5rem;
+      }
+    }
+
     @media (max-width: 768px) {
       header h1 { font-size: 1.8rem; }
       header p { font-size: 1rem; }
@@ -232,12 +246,11 @@
         const rotateY = ((x - centerX) / centerX) * 8;
         card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) translateY(-4px) scale(1.03)`;
 
-        // Move shine
         const shineX = ((x / rect.width) * 200) - 100;
         const shineY = ((y / rect.height) * 200) - 100;
         card.style.setProperty('--shineX', `${shineX}%`);
         card.style.setProperty('--shineY', `${shineY}%`);
-        card.querySelector('::before'); // trigger reflow
+        card.querySelector('::before');
         card.style.setProperty('transform', card.style.transform);
         card.style.backgroundImage = `linear-gradient(135deg, #c7d2fe, #bfdbfe), radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.25) 0%, transparent 60%)`;
       });
