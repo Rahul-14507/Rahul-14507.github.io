@@ -6,117 +6,134 @@
   <title>FixMyLaptop 🚀</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: #f9fafb;
-      color: #2c3e50;
+      background: #f3f4f6;
+      color: #1f2937;
       line-height: 1.6;
     }
+
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
       padding: 20px;
     }
+
+    /* 🔥 Special Offer Banner */
+    .banner {
+      background: linear-gradient(90deg, #f59e0b, #f97316);
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 1rem;
+      border-bottom: 3px solid #ea580c;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
     header {
       text-align: center;
-      padding: 30px 10px;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      margin-top: 20px;
     }
-    header h1 { font-size: 2rem; margin-bottom: 10px; }
-    header p { font-size: 1.1rem; color: #555; }
+    header h1 { font-size: 2.2rem; margin-bottom: 15px; }
+    header p {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: auto;
+      opacity: 0.95;
+    }
 
     section {
       background: white;
-      padding: 25px;
-      border-radius: 12px;
-      margin: 20px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 30px;
+      border-radius: 16px;
+      margin: 30px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
     section h2 {
       margin-bottom: 15px;
       color: #111827;
-      font-size: 1.3rem;
+      font-size: 1.5rem;
+      border-left: 5px solid #3b82f6;
+      padding-left: 10px;
     }
     ul { text-align: left; padding-left: 20px; }
-    li { margin-bottom: 6px; }
+    li { margin-bottom: 8px; font-weight: 500; }
 
     iframe {
       width: 100%;
       min-height: 1300px;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     .whatsapp-btn {
       display: inline-block;
-      margin-top: 15px;
+      margin-top: 20px;
       background: #25d366;
       color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 1rem;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: bold;
       text-decoration: none;
       transition: 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    .whatsapp-btn:hover { background: #1ebe5b; }
+    .whatsapp-btn:hover {
+      background: #1ebe5b;
+      transform: translateY(-2px);
+    }
 
     footer {
       text-align: center;
-      padding: 15px;
+      padding: 20px;
       font-size: 0.9rem;
-      color: #666;
+      color: #6b7280;
     }
 
     @media (max-width: 600px) {
       header h1 { font-size: 1.6rem; }
+      header p { font-size: 0.95rem; }
+      .banner { font-size: 0.9rem; }
       iframe { min-height: 1600px; }
     }
   </style>
 </head>
 <body>
+  <!-- 🎉 Launch Offer Banner -->
+  <div class="banner">
+    🎉 Student Launch Offer: Free cleanup with the first 10 bookings!
+  </div>
+
   <div class="container">
     <header>
       <h1>FixMyLaptop 🚀</h1>
-      <p>Affordable upgrades, repairs, and maintenance for your laptops & desktops – made easy for students and professionals.</p>
+      <p>
+        All services are personally handled by <b>Rahul Pujari</b>,  
+        First Year CSE-D Student at <b>IARE College</b>.  
+        No third-party involvement. Every repair/upgrade is recorded on video.  
+        If parts are required, a direct link will be sent for you to purchase –  
+        <b>no hidden charges</b>. Service charges are confirmed after checking  
+        your device brand, model, and issue.
+      </p>
     </header>
 
     <section>
-      <h2>🔧 What We Do</h2>
-      <h3>Device Options</h3>
+      <h2>🔧 Services Offered</h2>
       <ul>
-        <li>Laptop</li>
-        <li>Desktop</li>
-      </ul>
-
-      <h3>Upgrades</h3>
-      <ul>
-        <li>Storage expansion (SSD/HDD)</li>
-        <li>Memory expansion (RAM)</li>
-        <li>Make device faster & responsive (boot-time optimization)</li>
-        <li>Add Wi-Fi & Bluetooth features (WLAN module)</li>
-      </ul>
-
-      <h3>Software</h3>
-      <ul>
-        <li>Unlocking (forgot password / sign-in issues)</li>
-        <li>System not booting / bricked system</li>
-        <li>Install/Re-install OS (Win 11, etc.)</li>
-        <li>Install MS Office</li>
-        <li>Activation of Windows / MS Office</li>
-        <li>Wi-Fi/Bluetooth not working</li>
-      </ul>
-
-      <h3>Repairs</h3>
-      <ul>
-        <li>Battery replacement (laptops only)</li>
-        <li>Hinge replacement</li>
-        <li>Complete display replacement</li>
-      </ul>
-
-      <h3>Maintenance</h3>
-      <ul>
-        <li>Thermal paste replacement (CPU/GPU)</li>
-        <li>Ventilation duct cleaning</li>
-        <li>General cleanup</li>
+        <li>Device Options</li>
+        <li>Upgrades</li>
+        <li>Software</li>
+        <li>Repairs</li>
+        <li>Maintenance</li>
       </ul>
     </section>
 
@@ -124,15 +141,15 @@
       <h2>📩 Book a Service</h2>
       <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdAls3kGQ47kEo-GDGsDikjBDR0UhNtFUCbwO6vLcOXT4qraQ/viewform?embedded=true">Loading…</iframe>
       <div style="text-align:center;">
-        <p>Or book directly via WhatsApp:</p>
+        <p style="margin-top:15px;">Or book directly via WhatsApp:</p>
         <a class="whatsapp-btn" href="https://wa.me/917032856170?text=Hi,%20I%20want%20to%20book%20a%20laptop%20repair%20service!" target="_blank">
-          Chat on WhatsApp
+          💬 Chat on WhatsApp
         </a>
       </div>
     </section>
 
     <footer>
-      © 2025 FixMyLaptop | Made with ❤️ by Rahul
+      © 2025 FixMyLaptop | Made with ❤️ by Rahul Pujari, IARE CSE-D
     </footer>
   </div>
 </body>
