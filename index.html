@@ -2,36 +2,112 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FixMyLaptop 🚀</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; }
-    h1 { color: #2c3e50; }
-    .container { max-width: 600px; margin: auto; padding: 20px; background: white; border-radius: 12px; }
-    button { background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
-    button:hover { background: #219150; }
-    iframe { width: 100%; height: 500px; border: none; }
+    /* Global reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9fafb;
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 10px;
+    }
+    header h1 { font-size: 2rem; margin-bottom: 10px; }
+    header p { font-size: 1.1rem; color: #555; }
+
+    section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    section h2 {
+      margin-bottom: 15px;
+      color: #111827;
+      font-size: 1.4rem;
+    }
+
+    ul { text-align: left; padding-left: 20px; }
+    li { margin-bottom: 8px; }
+
+    iframe {
+      width: 100%;
+      min-height: 1200px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .whatsapp-btn {
+      display: inline-block;
+      margin-top: 15px;
+      background: #25d366;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: 0.3s ease;
+    }
+    .whatsapp-btn:hover {
+      background: #1ebe5b;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      iframe { min-height: 1500px; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Laptop too slow? 🚀</h1>
-    <p>We upgrade & repair laptops with SSDs, RAM, OS setup – fast, affordable, student-friendly.</p>
+    <header>
+      <h1>FixMyLaptop 🚀</h1>
+      <p>We upgrade & repair laptops with SSDs, RAM, OS setup – fast, affordable, student-friendly.</p>
+    </header>
 
-    <h2>💻 Services & Pricing</h2>
-    <ul style="text-align:left;">
-      <li>SSD Upgrade (240GB/480GB) – ₹1,999–2,999</li>
-      <li>RAM Upgrade (4GB/8GB) – ₹1,500–2,500</li>
-      <li>OS Install / Speed Optimization – ₹500–700</li>
-    </ul>
+    <section>
+      <h2>💻 Services & Pricing</h2>
+      <ul>
+        <li>SSD Upgrade (240GB/480GB) – ₹1,999–2,999</li>
+        <li>RAM Upgrade (4GB/8GB) – ₹1,500–2,500</li>
+        <li>OS Install / Speed Optimization – ₹500–700</li>
+      </ul>
+    </section>
 
-    <h2>📩 Book a Service</h2>
-    <!-- Replace the src with your Google Form embed link -->
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdAls3kGQ47kEo-GDGsDikjBDR0UhNtFUCbwO6vLcOXT4qraQ/viewform?embedded=true" width="640" height="2905" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    <section>
+      <h2>📩 Book a Service</h2>
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdAls3kGQ47kEo-GDGsDikjBDR0UhNtFUCbwO6vLcOXT4qraQ/viewform?embedded=true">Loading…</iframe>
+      <div style="text-align:center;">
+        <p>Or book directly via WhatsApp:</p>
+        <a class="whatsapp-btn" href="https://wa.me/917032856170?text=Hi,%20I%20want%20to%20book%20a%20laptop%20upgrade!" target="_blank">
+          Chat on WhatsApp
+        </a>
+      </div>
+    </section>
 
-    <h2>Or Book on WhatsApp</h2>
-    <a href="https://wa.me/917032856170?text=Hi,%20I%20want%20to%20book%20a%20laptop%20upgrade!" target="_blank">
-      <button>Chat on WhatsApp</button>
-    </a>
+    <footer>
+      © 2025 FixMyLaptop | Made with ❤️ by Rahul
+    </footer>
   </div>
 </body>
 </html>
