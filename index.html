@@ -40,9 +40,7 @@
       font-weight: 500;
       border-bottom: 2px solid #3b82f6;
     }
-    @media (min-width: 768px) {
-      .mobile-note { display: none; }
-    }
+    @media (min-width: 768px) { .mobile-note { display: none; } }
 
     header {
       text-align: center;
@@ -54,12 +52,7 @@
       margin-top: 20px;
     }
     header h1 { font-size: 2.5rem; margin-bottom: 15px; }
-    header p {
-      font-size: 1.2rem;
-      max-width: 800px;
-      margin: auto;
-      opacity: 0.95;
-    }
+    header p { font-size: 1.2rem; max-width: 800px; margin: auto; opacity: 0.95; }
 
     section {
       background: white;
@@ -105,8 +98,6 @@
       z-index: 2;
       position: relative;
     }
-
-    /* Shine effect */
     .services li::before {
       content: "";
       position: absolute;
@@ -119,15 +110,8 @@
       transition: transform 0.2s ease;
       pointer-events: none;
     }
-
-    .services li:hover span {
-      animation: bounce 0.6s ease;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
+    .services li:hover span { animation: bounce 0.6s ease; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
     iframe {
       width: 100%;
@@ -137,10 +121,9 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    .whatsapp-btn {
+    .btn {
       display: inline-block;
-      margin-top: 25px;
-      background: #25d366;
+      margin: 12px 8px 0 0;
       color: white;
       padding: 16px 28px;
       border-radius: 12px;
@@ -150,10 +133,10 @@
       transition: 0.3s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-    .whatsapp-btn:hover {
-      background: #1ebe5b;
-      transform: translateY(-3px) scale(1.02);
-    }
+    .whatsapp-btn { background: #25d366; }
+    .whatsapp-btn:hover { background: #1ebe5b; transform: translateY(-3px) scale(1.02); }
+    .instagram-btn { background: #e4405f; }
+    .instagram-btn:hover { background: #c1355b; transform: translateY(-3px) scale(1.02); }
 
     footer {
       text-align: center;
@@ -162,20 +145,10 @@
       color: #6b7280;
     }
 
-    /* 🔹 Mobile tweaks for services */
     @media (max-width: 480px) {
-      .services li {
-        padding: 10px 12px;
-        font-size: 0.95rem;
-      }
-      .services li span {
-        display: inline-block;
-        margin: 0 6px 0 0;
-        vertical-align: middle;
-        font-size: 1.5rem;
-      }
+      .services li { padding: 10px 12px; font-size: 0.95rem; }
+      .services li span { display: inline-block; margin: 0 6px 0 0; vertical-align: middle; font-size: 1.5rem; }
     }
-
     @media (max-width: 768px) {
       header h1 { font-size: 1.8rem; }
       header p { font-size: 1rem; }
@@ -219,10 +192,15 @@
     <section>
       <h2>📩 Book a Service</h2>
       <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdAls3kGQ47kEo-GDGsDikjBDR0UhNtFUCbwO6vLcOXT4qraQ/viewform?embedded=true">Loading…</iframe>
-      <div style="text-align:center;">
-        <p style="margin-top:20px;">Or book directly via WhatsApp:</p>
-        <a class="whatsapp-btn" href="https://wa.me/917032856170?text=Hi,%20I%20want%20to%20book%20a%20laptop%20repair%20service!" target="_blank">
-          💬 Chat on WhatsApp
+      <div style="text-align:center; margin-top:20px;">
+        <p>Or book directly via messaging:</p>
+        <a class="btn whatsapp-btn" href="https://wa.me/917032856170?text=Hi,%20I%20want%20to%20book%20a%20laptop%20repair%20service!" target="_blank">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:20px; vertical-align:middle; margin-right:8px;">
+          Chat on WhatsApp
+        </a>
+        <a id="instagramBtn" class="btn instagram-btn" href="#" target="_blank">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" style="width:20px; vertical-align:middle; margin-right:8px;">
+          DM on Instagram
         </a>
       </div>
     </section>
@@ -233,8 +211,8 @@
   </div>
 
   <script>
+    // Services card effect
     const cards = document.querySelectorAll('.services li');
-
     cards.forEach(card => {
       card.addEventListener('mousemove', e => {
         const rect = card.getBoundingClientRect();
@@ -245,21 +223,22 @@
         const rotateX = ((y - centerY) / centerY) * 8;
         const rotateY = ((x - centerX) / centerX) * 8;
         card.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) translateY(-4px) scale(1.03)`;
-
         const shineX = ((x / rect.width) * 200) - 100;
         const shineY = ((y / rect.height) * 200) - 100;
-        card.style.setProperty('--shineX', `${shineX}%`);
-        card.style.setProperty('--shineY', `${shineY}%`);
-        card.querySelector('::before');
-        card.style.setProperty('transform', card.style.transform);
         card.style.backgroundImage = `linear-gradient(135deg, #c7d2fe, #bfdbfe), radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.25) 0%, transparent 60%)`;
       });
-
       card.addEventListener('mouseleave', () => {
         card.style.transform = 'rotateX(0) rotateY(0) translateY(0) scale(1)';
         card.style.background = 'linear-gradient(135deg, #e0f2fe, #dbeafe)';
       });
     });
+
+    // Detect mobile to change Instagram link
+    const instaBtn = document.getElementById('instagramBtn');
+    const mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    instaBtn.href = mobile 
+      ? 'instagram://user?username=rahul.pujari14'  // opens app
+      : 'https://www.instagram.com/rahul.pujari14'; // opens profile on desktop
   </script>
 </body>
 </html>
