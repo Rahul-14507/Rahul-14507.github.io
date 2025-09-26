@@ -1,14 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FixMyPC 🚀</title>
-    </head>
-    <body>
-        <h3 align="center">FixMyLaptop is now FixMyPC</h3>
-        <a href="https://fix-my-pc.vercel.app/">
-            <h4 align="center">Click here for FixMyPC</h4>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting... FixMyPC 🚀</title>
+    
+    <meta http-equiv="refresh" content="5; URL=https://fix-my-pc.vercel.app/">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* The main content card */
+        .card {
+            background: #ffffff;
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+            width: 100%;
+            transform: translateY(-20px);
+            animation: float-in 0.6s ease-out forwards;
+        }
+
+        /* Simple animation for the card appearing */
+        @keyframes float-in {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #1e3a8a;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        /* Styling the link to look like a button */
+        .redirect-button {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .redirect-button:hover {
+            background-color: #2563eb;
+            transform: translateY(-3px);
+        }
+
+        /* Countdown text */
+        .countdown {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>We've Moved! 🚀</h1>
+        <p>FixMyLaptop has been upgraded and is now <strong>FixMyPC</strong>.</p>
+        <a href="https://fix-my-pc.vercel.app/" class="redirect-button">
+            Go to the New Site
         </a>
-    </body>
+        <p class="countdown">You will be redirected automatically...</p>
+    </div>
+</body>
 </html>
