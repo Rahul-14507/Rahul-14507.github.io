@@ -3,6 +3,687 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vayu Suraksha - Urban Air Quality</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Leaflet CSS and JS for interactive maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Load Lucide icons -->
+    <script type="module" src="https://unpkg.com/lucide-react@latest/dist/umd/lucide.js"></script>
+    <script nomodule src="https://unpkg.com/lucide-react@latest/dist/umd/lucide.min.js"></script>
+    
+    <style>
+        /* Use Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Dark background */
+            color: #d1d5db; /* Light text */
+        }
+        /* Custom toggle switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #4f46e5;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #4f46e5;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        /* Ensure Leaflet map container has a size */
+        #map {
+            height: 100%;
+            width: 100%;
+            background-color: #1f2937; /* Darker bg for map */
+        }
+        /* Leaflet popup customization */
+        .leaflet-popup-content-wrapper {
+            background-color: #374151; /* gray-700 */
+            color: #d1d5db; /* gray-300 */
+            border-radius: 8px;
+            border: 1px solid #4b5563;
+        }
+        .leaflet-popup-content {
+            font-family: 'Inter', sans-serif;
+            margin: 12px;
+        }
+        .leaflet-popup-tip {
+            background: #374151;
+        }
+        .leaflet-popup-close-button {
+            color: #d1d5db !important;
+            padding-top: 6px;
+            padding-right: 6px;
+        }
+    </style>
+</head>
+<body class="overflow-hidden"> <!-- Changed to overflow-hidden for full-screen layout -->
+
+    <!-- Header -->
+    <header class="bg-gray-900 shadow-md sticky top-0 z-30">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Title -->
+                <div class="flex-shrink-0 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400 mr-2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-5.5-4-4 2.5-5.5 4-3 3.5-3 5.5a7 7 0 0 0 7 7z"></path><path d="M12 2a6 6 0 0 1 6 6c0 1.5-1 3.2-3 4.5S13.5 16 12 16s-2.5-1.8-4-3.2-3-3-3-4.5a6 6 0 0 1 6-6z"></path></svg>
+                    <span class="text-2xl font-bold text-white">Vayu Suraksha</span>
+                </div>
+                
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex md:items-center md:space-x-4">
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-700">Live Map</a>
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">About the Initiative</a>
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">News & Reports</a>
+                    <button onclick="showLogin('Public')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Public Portal</button>
+                    <button onclick="showLogin('NGO')" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">NGO Login</button>
+                    <button onclick="showLogin('Government')" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700">Govt. Login</button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-gray-900">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-700">Live Map</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">About the Initiative</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">News & Reports</a>
+                <button onclick="showLogin('Public')" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Public Portal</button>
+                <button onclick="showLogin('NGO')" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">NGO Login</button>
+                <button onclick="showLogin('Government')" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white bg-red-600 hover:bg-red-700">Govt. Login</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex flex-col lg:flex-row" style="height: calc(100vh - 64px);">
+        
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-80 bg-gray-800 shadow-lg p-4 space-y-6 overflow-y-auto">
+            <h2 class="text-xl font-semibold text-white">Dashboard Controls</h2>
+
+            <!-- Layer Toggles -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-200 mb-3">Map Layers</h3>
+                <div class="space-y-3">
+                    <!-- ISRO Bhuvan Layer -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-300">ISRO Bhuvan Layer</span>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="bhuvan-toggle" id="bhuvan-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" onclick="toggleBhuvanLayer()"/>
+                            <label for="bhuvan-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-600 cursor-pointer"></label>
+                        </div>
+                    </div>
+                    <!-- Heatmap Layer -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-300">Pollution Heatmap</span>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="heatmap-toggle" id="heatmap-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" onclick="showToast('Heatmap layer activated (demo)')"/>
+                            <label for="heatmap-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-600 cursor-pointer"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pollutant Selector -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-200 mb-3">Pollutant</h3>
+                <select id="pollutant-select" class="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="aqi">AQI (Overall)</option>
+                    <option value="pm25">PM2.5</option>
+                    <option value="pm10">PM10</option>
+                    <!-- <option value="o3">O3 (Ozone)</option>
+                    <option value="no2">NO2 (Nitrogen Dioxide)</option>
+                    <option value="so2">SO2 (Sulfur Dioxide)</option>
+                    <option value="co">CO (Carbon Monoxide)</option> -->
+                </select>
+            </div>
+
+            <!-- AQI Legend -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-200 mb-3">AQI Legend</h3>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-sm bg-green-500 mr-2 border border-gray-900"></div>
+                        <span class="text-sm text-gray-300">0-50: Good</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-sm bg-yellow-400 mr-2 border border-gray-900"></div>
+                        <span class="text-sm text-gray-300">51-100: Satisfactory</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-sm bg-orange-500 mr-2 border border-gray-900"></div>
+                        <span class="text-sm text-gray-300">101-200: Moderate</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-sm bg-red-600 mr-2 border border-gray-900"></div>
+                        <span class="text-sm text-gray-300">201-300: Poor</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-sm bg-purple-700 mr-2 border border-gray-900"></div>
+                        <span class="text-sm text-gray-300">301-400: Very Poor</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-5 h-5 rounded-sm bg-red-900 mr-2 border border-gray-900"></div>
+                        <span class="text-sm text-gray-300">401+: Severe</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citizen Report Button -->
+            <button class="w-full bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center space-x-2" onclick="showToast('Citizen Reporting feature (demo)')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c-4 0-6.5-2-7-5l-1.5-6a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2l-1.5 6c-.5 3-3 5-7 5Z"/><path d="M6 9V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v3"/></svg>
+                <span>Report Pollution</span>
+            </button>
+        </aside>
+
+        <!-- Map Area -->
+        <div id="map" class="flex-1 relative overflow-hidden">
+            <!-- Leaflet map will be initialized here -->
+        </div>
+    </main>
+
+    <!-- Modal for City Data -->
+    <div id="city-modal" class="fixed inset-0 z-[1001] flex items-center justify-center bg-black bg-opacity-75 hidden" onclick="closeModal()">
+        <div class="bg-gray-800 rounded-lg shadow-2xl max-w-lg w-full m-4 overflow-hidden" onclick="event.stopPropagation()">
+            <!-- Modal Header -->
+            <div id="modal-header" class="p-4 border-b border-gray-700 flex justify-between items-center">
+                <h3 id="modal-city-name" class="text-2xl font-semibold text-white">City Data</h3>
+                <button class="text-gray-400 hover:text-white" onclick="closeModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 max-h-[70vh] overflow-y-auto">
+                <!-- AQI Info -->
+                <div class="text-center mb-6">
+                    <span class="text-lg text-gray-400">Overall AQI</span>
+                    <div id="modal-aqi-value" class="text-7xl font-bold my-2">--</div>
+                    <div id="modal-aqi-status" class="text-2xl font-medium px-4 py-1 rounded-full inline-block">--</div>
+                </div>
+
+                <!-- Pollutant Details -->
+                <div class="grid grid-cols-3 gap-4 text-center mb-6">
+                    <div>
+                        <span class="text-sm text-gray-400">PM2.5</span>
+                        <div id="modal-pm25" class="text-xl font-semibold text-white">--</div>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-400">PM10</span>
+                        <div id="modal-pm10" class="text-xl font-semibold text-white">--</div>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-400">Dominant</span>
+                        <div id="modal-main" class="text-xl font-semibold text-white">--</div>
+                    </div>
+                </div>
+
+                <!-- Health Advisory -->
+                <div class="bg-gray-900 p-4 rounded-lg">
+                    <h4 class="font-semibold text-lg text-white mb-2">Health Advisory</h4>
+                    <p id="modal-health" class="text-gray-300 text-sm">--</p>
+                </div>
+                
+                <!-- Potential Sources -->
+                <div class="mt-4">
+                    <h4 class="font-semibold text-lg text-white mb-2">Potential Sources (Demo)</h4>
+                    <div id="modal-sources" class="flex flex-wrap gap-2">
+                        <!-- Source tags will be injected here -->
+                    </div>
+                </div>
+
+                <!-- NEW: Bhuvan Analysis Section -->
+                <div class="mt-6 border-t border-gray-700 pt-4">
+                    <h4 class="font-semibold text-lg text-white mb-3">Bhuvan Geospatial Analysis (Demo)</h4>
+                    <p class="text-sm text-gray-400 mb-4">Click to analyze the land use (LULC) and nearby health facilities for this location.</p>
+                    
+                    <button id="bhuvan-analyze-button" class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center space-x-2">
+                        <span>Analyze Area</span>
+                    </button>
+
+                    <!-- Loader -->
+                    <div id="bhuvan-loader" class="text-center py-4 hidden">
+                        <svg class="animate-spin h-6 w-6 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="text-sm text-gray-400 mt-2">Contacting Bhuvan API (Demo)...</span>
+                    </div>
+
+                    <!-- Results Container -->
+                    <div id="bhuvan-analysis-results" class="mt-4 space-y-4">
+                        <!-- Results will be injected here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-20 right-5 z-[1002] space-y-3">
+        <!-- Toasts will be dynamically added here -->
+    </div>
+
+    <script>
+        // --- Global Map Variables ---
+        let map;
+        let baseLayer;
+        let bhuvanLayer;
+        let cityMarkers = L.layerGroup(); // Layer group for our city markers
+
+        // --- Mock Data with Coordinates ---
+        const mockPollutionData = {
+            'delhi': { 
+                name: 'New Delhi, Delhi', 
+                coords: [28.6139, 77.2090],
+                aqi: 412, 
+                pm25: 362.1, 
+                pm10: 435.5, 
+                main: 'PM2.5', 
+                health: 'Severe. Avoid all outdoor activity. Keep windows closed. Use air purifiers.', 
+                sources: ['Vehicular Traffic', 'Stubble Burning (Seasonal)', 'Industrial Emissions', 'Construction Dust'] 
+            },
+            'mumbai': { 
+                name: 'Mumbai, Maharashtra', 
+                coords: [19.0760, 72.8777],
+                aqi: 168, 
+                pm25: 85.1, 
+                pm10: 130.2, 
+                main: 'PM10', 
+                health: 'Moderate. Unhealthy for sensitive groups. Reduce prolonged outdoor exertion.', 
+                sources: ['Road Dust', 'Construction', 'Vehicular Traffic', 'Sea Salt'] 
+            },
+            'kolkata': { 
+                name: 'Kolkata, West Bengal', 
+                coords: [22.5726, 88.3639],
+                aqi: 182, 
+                pm25: 115.7, 
+                pm10: 190.3, 
+                main: 'PM2.5', 
+                health: 'Moderate. People with breathing issues should avoid outdoor activities.', 
+                sources: ['Vehicular Emissions', 'Open Waste Burning', 'Industrial'] 
+            },
+            'chennai': { 
+                name: 'Chennai, Tamil Nadu', 
+                coords: [13.0827, 80.2707],
+                aqi: 72, 
+                pm25: 22.4, 
+                pm10: 65.8, 
+                main: 'PM10', 
+                health: 'Satisfactory. Minor breathing discomfort to sensitive people.', 
+                sources: ['Vehicular Traffic', 'Road Dust', 'Construction'] 
+            },
+            'bengaluru': { 
+                name: 'Bengaluru, Karnataka', 
+                coords: [12.9716, 77.5946],
+                aqi: 91, 
+                pm25: 31.5, 
+                pm10: 52.1, 
+                main: 'PM2.5', 
+                health: 'Satisfactory. Minor breathing discomfort to sensitive people.', 
+                sources: ['Vehicular Traffic', 'Construction Dust'] 
+            },
+            'kurnool': { 
+                name: 'Kurnool, Andhra Pradesh', 
+                coords: [15.8281, 78.0373],
+                aqi: 89, 
+                pm25: 29.5, 
+                pm10: 45.1, 
+                main: 'PM2.5', 
+                health: 'Satisfactory. Minor breathing discomfort to sensitive people.', 
+                sources: ['Vehicular Traffic', 'Road Dust', 'Local Burning'] 
+            },
+            'jaipur': { 
+                name: 'Jaipur, Rajasthan', 
+                coords: [26.9124, 75.7873],
+                aqi: 145, 
+                pm25: 65.2, 
+                pm10: 128.9, 
+                main: 'PM10', 
+                health: 'Moderate. Unhealthy for sensitive groups.', 
+                sources: ['Road Dust', 'Construction', 'Vehicular Traffic'] 
+            },
+            'lucknow': { 
+                name: 'Lucknow, Uttar Pradesh', 
+                coords: [26.8467, 80.9462],
+                aqi: 278, 
+                pm25: 190.1, 
+                pm10: 250.6, 
+                main: 'PM2.5', 
+                health: 'Poor. Causes breathing discomfort on prolonged exertion.', 
+                sources: ['Vehicular Traffic', 'Biomass Burning', 'Construction'] 
+            }
+        };
+
+        // --- NEW: Mock Bhuvan API Data ---
+        const mockBhuvanLULC = {
+            'delhi': { 'Urban/Built-up': '72.5%', 'Industrial': '10.2%', 'Green Space': '8.1%', 'Water Bodies': '5.2%', 'Other': '4.0%' },
+            'mumbai': { 'Urban/Built-up': '65.1%', 'Industrial': '12.5%', 'Green Space': '9.8%', 'Water Bodies': '8.3%', 'Mangroves': '4.3%' },
+            'kolkata': { 'Urban/Built-up': '68.0%', 'Industrial': '11.0%', 'Green Space': '6.5%', 'Water Bodies': '10.5%', 'Wetlands': '4.0%' },
+            'chennai': { 'Urban/Built-up': '62.3%', 'Industrial': '9.0%', 'Green Space': '12.0%', 'Water Bodies': '10.1%', 'Beach/Sand': '6.6%' },
+            'bengaluru': { 'Urban/Built-up': '75.0%', 'Industrial': '8.5%', 'Green Space': '10.5%', 'Water Bodies': '6.0%', 'Other': '0.0%' },
+            'kurnool': { 'Urban/Built-up': '45.0%', 'Agriculture': '30.0%', 'Barren Land': '15.0%', 'Industrial': '5.0%', 'Water Bodies': '5.0%' },
+            'jaipur': { 'Urban/Built-up': '55.0%', 'Agriculture': '20.0%', 'Barren/Scrub': '15.0%', 'Industrial': '5.0%', 'Green Space': '5.0%' },
+            'lucknow': { 'Urban/Built-up': '60.0%', 'Agriculture': '25.0%', 'Green Space': '8.0%', 'Industrial': '4.0%', 'Water Bodies': '3.0%' }
+        };
+
+        const mockBhuvanProximity = {
+            'delhi': { 'hospitals': 45, 'clinics': '150+' },
+            'mumbai': { 'hospitals': 38, 'clinics': '120+' },
+            'kolkata': { 'hospitals': 25, 'clinics': '90+' },
+            'chennai': { 'hospitals': 30, 'clinics': '100+' },
+            'bengaluru': { 'hospitals': 32, 'clinics': '110+' },
+            'kurnool': { 'hospitals': 8, 'clinics': 35 },
+            'jaipur': { 'hospitals': 15, 'clinics': 60 },
+            'lucknow': { 'hospitals': 20, 'clinics': 75 }
+        };
+
+        // --- Utility Functions ---
+
+        /**
+         * Gets AQI color and status
+         * @param {number} aqi - The Air Quality Index value
+         * @returns {object} - { color, status, hex }
+         */
+        function getAqiInfo(aqi) {
+            if (aqi <= 50) return { color: 'bg-green-500', status: 'Good', hex: '#22c55e' };
+            if (aqi <= 100) return { color: 'bg-yellow-400', status: 'Satisfactory', hex: '#facc15' };
+            if (aqi <= 200) return { color: 'bg-orange-500', status: 'Moderate', hex: '#f97316' };
+            if (aqi <= 300) return { color: 'bg-red-600', status: 'Poor', hex: '#dc2626' };
+            if (aqi <= 400) return { color: 'bg-purple-700', status: 'Very Poor', hex: '#9333ea' };
+            return { color: 'bg-red-900', status: 'Severe', hex: '#7f1d1d' };
+        }
+
+        /**
+         * Shows a toast notification
+         * @param {string} message - The message to display
+         * @param {string} type - 'info' (default) or 'error'
+         */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-red-600' : 'bg-indigo-600';
+            
+            toast.className = `p-4 rounded-lg shadow-xl text-white ${bgColor} transform transition-all duration-300 ease-in-out translate-x-full opacity-0`;
+            toast.innerText = message;
+            
+            container.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                toast.classList.add('translate-x-0', 'opacity-100');
+            }, 100);
+
+            // Animate out and remove
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    container.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // --- Event Handlers ---
+
+        /**
+         * Shows the modal with data for a specific city
+         * @param {string} cityKey - The key from mockPollutionData
+         */
+        function showCityData(cityKey) {
+            const data = mockPollutionData[cityKey];
+            if (!data) return;
+
+            const modal = document.getElementById('city-modal');
+            const aqiInfo = getAqiInfo(data.aqi);
+
+            // Populate modal fields
+            document.getElementById('modal-city-name').innerText = data.name;
+            document.getElementById('modal-aqi-value').innerText = data.aqi;
+            document.getElementById('modal-aqi-status').innerText = aqiInfo.status;
+            
+            const aqiStatusEl = document.getElementById('modal-aqi-status');
+            aqiStatusEl.className = `text-2xl font-medium px-4 py-1 rounded-full inline-block text-white ${aqiInfo.color}`;
+
+            document.getElementById('modal-pm25').innerText = `${data.pm25} µg/m³`;
+            document.getElementById('modal-pm10').innerText = `${data.pm10} µg/m³`;
+            document.getElementById('modal-main').innerText = data.main;
+            document.getElementById('modal-health').innerText = data.health;
+
+            // Populate sources
+            const sourcesContainer = document.getElementById('modal-sources');
+            sourcesContainer.innerHTML = ''; // Clear old sources
+            data.sources.forEach(source => {
+                const tag = document.createElement('span');
+                tag.className = 'bg-gray-700 text-gray-200 text-xs font-medium px-2.5 py-0.5 rounded-full';
+                tag.innerText = source;
+                sourcesContainer.appendChild(tag);
+            });
+            
+            // --- NEW: Reset Bhuvan Analysis Section ---
+            document.getElementById('bhuvan-loader').classList.add('hidden');
+            document.getElementById('bhuvan-analysis-results').innerHTML = '';
+            
+            const analyzeButton = document.getElementById('bhuvan-analyze-button');
+            analyzeButton.classList.remove('hidden');
+            analyzeButton.disabled = false;
+            // Set the onclick event to pass the current cityKey
+            analyzeButton.onclick = () => analyzeArea(cityKey); 
+            // --- End of NEW Section ---
+
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+
+        /**
+         * Closes the city data modal
+         */
+        function closeModal() {
+            const modal = document.getElementById('city-modal');
+            modal.classList.add('hidden');
+        }
+
+        /**
+         * Simulates toggling the Bhuvan layer
+         */
+        function toggleBhuvanLayer() {
+            const toggle = document.getElementById('bhuvan-toggle');
+            
+            if (toggle.checked) {
+                if (map.hasLayer(bhuvanLayer)) {
+                    bhuvanLayer.setOpacity(0.7);
+                } else {
+                    map.addLayer(bhuvanLayer);
+                    bhuvanLayer.setOpacity(0.7);
+                }
+                showToast('ISRO Bhuvan satellite layer activated');
+            } else {
+                if (map.hasLayer(bhuvanLayer)) {
+                    bhuvanLayer.setOpacity(0);
+                    // Or map.removeLayer(bhuvanLayer);
+                }
+                showToast('ISRO Bhuvan layer deactivated');
+            }
+        }
+
+        /**
+         * Simulates logging into a stakeholder portal
+         * @param {string} role - 'Public', 'NGO', or 'Government'
+         */
+        function showLogin(role) {
+            showToast(`Redirecting to ${role} portal (demo)...`);
+        }
+
+        /**
+         * Updates the map markers based on selected pollutant
+         */
+        function updateMapMarkers() {
+            const selectedPollutant = document.getElementById('pollutant-select').value;
+            cityMarkers.clearLayers(); // Clear existing markers
+            
+            for (const [key, data] of Object.entries(mockPollutionData)) {
+                let value, aqiInfo;
+                
+                // In a real app, you'd have different legends. Here, we'll just use AQI for color.
+                if (selectedPollutant === 'aqi') {
+                    value = data.aqi;
+                    aqiInfo = getAqiInfo(data.aqi);
+                } else if (selectedPollutant === 'pm25') {
+                    value = data.pm25;
+                    aqiInfo = getAqiInfo(data.aqi); // Still using AQI for color
+                } else if (selectedPollutant === 'pm10') {
+                    value = data.pm10;
+                    aqiInfo = getAqiInfo(data.aqi); // Still using AQI for color
+                }
+
+                // Create a pulsing circle marker
+                const marker = L.circleMarker(data.coords, {
+                    radius: 10,
+                    fillColor: aqiInfo.hex,
+                    color: '#ffffff', // white border
+                    weight: 2,
+                    fillOpacity: 0.8,
+                }).addTo(cityMarkers);
+
+                // Add a simple popup
+                marker.bindPopup(`<b>${data.name}</b><br>${selectedPollutant.toUpperCase()}: ${value}`);
+
+                // Add click event to open the detailed modal
+                marker.on('click', () => {
+                    showCityData(key);
+                });
+            }
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const menuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Initialize Leaflet Map
+            map = L.map('map').setView([22.0, 79.0], 5); // Center of India
+
+            // Base Map Layer (dark theme)
+            baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+
+            // REAL Bhuvan Layer
+            // This is a WMS (Web Map Service) layer from ISRO Bhuvan.
+            // Note: Bhuvan WMS can sometimes be slow or have availability issues.
+            bhuvanLayer = L.tileLayer.wms('https://bhuvan-app1.nrsc.gov.in/bhuvan/wms', {
+                layers: 'rasters:LISS_III_MOSAIC_2015-16', // This is a specific satellite imagery layer
+                format: 'image/png',
+                transparent: true,
+                attribution: 'ISRO / Bhuvan',
+                opacity: 0 // Start hidden
+            });
+            
+            // We don't add it to the map initially, the toggle will do that.
+
+            // Add marker layer group to map
+            cityMarkers.addTo(map);
+
+            // Initial marker render
+            updateMapMarkers();
+
+            // Add event listener to pollutant selector
+            document.getElementById('pollutant-select').addEventListener('change', updateMapMarkers);
+        });
+
+        /**
+         * NEW: Simulates a call to Bhuvan APIs
+         * @param {string} cityKey - The key for the city to analyze
+         */
+        function analyzeArea(cityKey) {
+            const loader = document.getElementById('bhuvan-loader');
+            const button = document.getElementById('bhuvan-analyze-button');
+            const resultsContainer = document.getElementById('bhuvan-analysis-results');
+
+            // 1. Show loader, hide button
+            loader.classList.remove('hidden');
+            button.classList.add('hidden');
+            resultsContainer.innerHTML = ''; // Clear old results
+
+            showToast('Contacting Bhuvan API... (Demo)');
+
+            // 2. Simulate API call delay
+            setTimeout(() => {
+                // 3. Get mock data
+                const lulcData = mockBhuvanLULC[cityKey] || { 'Error': 'No LULC data found' };
+                const proximityData = mockBhuvanProximity[cityKey] || { 'Error': 'No proximity data found' };
+
+                // 4. Build results HTML
+                let lulcHtml = `
+                    <div class="bg-gray-900 p-3 rounded-lg">
+                        <h5 class="font-semibold text-white mb-2">Thematic Statistics (LULC)</h5>
+                        <ul class="list-disc list-inside space-y-1 text-sm text-gray-300">
+                `;
+                for (const [key, value] of Object.entries(lulcData)) {
+                    lulcHtml += `<li><strong>${key}:</strong> ${value}</li>`;
+                }
+                lulcHtml += `</ul></div>`;
+
+                let proximityHtml = `
+                    <div class="bg-gray-900 p-3 rounded-lg">
+                        <h5 class="font-semibold text-white mb-2">Proximity (Health Facilities)</h5>
+                        <ul class="list-disc list-inside space-y-1 text-sm text-gray-300">
+                            <li><strong>Hospitals (within 10km):</strong> ${proximityData.hospitals || 'N/A'}</li>
+                            <li><strong>Clinics (within 10km):</strong> ${proximityData.clinics || 'N/A'}</li>
+                        </ul>
+                    </div>
+                `;
+
+                // 5. Hide loader and show results
+                loader.classList.add('hidden');
+                // We keep the button hidden to show the results are for the last analysis
+                resultsContainer.innerHTML = lulcHtml + proximityHtml;
+
+                // In a real app, you might show the button again to "Refresh"
+                // button.classList.remove('hidden');
+
+            }, 2000); // 2-second simulation
+        }
+    </script>
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting... FixMyPC 🚀</title>
     
     <meta http-equiv="refresh" content="3; URL=https://fix-my-pc.vercel.app/">
@@ -99,4 +780,4 @@
         <p class="countdown">You will be redirected automatically...</p>
     </div>
 </body>
-</html>
+</html> -->
